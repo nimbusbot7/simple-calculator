@@ -85,105 +85,126 @@
       <button class="action" onclick="clearAll()">AC</button>
       <button class="action" onclick="toggleSign()">±</button>
       <button class="action" onclick="applyPercent()">%</button>
-      <button class="operator" onclick="setOperator('÷')">÷</button>
+      <button class="operator" onclick="handleOperator('÷')">÷</button>
 
-      <button onclick="appendValue('7')">7</button>
-      <button onclick="appendValue('8')">8</button>
-      <button onclick="appendValue('9')">9</button>
-      <button class="operator" onclick="setOperator('×')">×</button>
+      <button onclick="inputDigit('7')">7</button>
+      <button onclick="inputDigit('8')">8</button>
+      <button onclick="inputDigit('9')">9</button>
+      <button class="operator" onclick="handleOperator('×')">×</button>
 
-      <button onclick="appendValue('4')">4</button>
-      <button onclick="appendValue('5')">5</button>
-      <button onclick="appendValue('6')">6</button>
-      <button class="operator" onclick="setOperator('−')">−</button>
+      <button onclick="inputDigit('4')">4</button>
+      <button onclick="inputDigit('5')">5</button>
+      <button onclick="inputDigit('6')">6</button>
+      <button class="operator" onclick="handleOperator('−')">−</button>
 
-      <button onclick="appendValue('1')">1</button>
-      <button onclick="appendValue('2')">2</button>
-      <button onclick="appendValue('3')">3</button>
-      <button class="operator" onclick="setOperator('+')">+</button>
+      <button onclick="inputDigit('1')">1</button>
+      <button onclick="inputDigit('2')">2</button>
+      <button onclick="inputDigit('3')">3</button>
+      <button class="operator" onclick="handleOperator('+')">+</button>
 
-      <button class="wide" onclick="appendValue('0')">0</button>
-      <button onclick="appendValue('.')">.</button>
-      <button class="operator" onclick="calculate()">=</button>
+      <button class="wide" onclick="inputDigit('0')">0</button>
+      <button onclick="inputDecimal()">.</button>
+      <button class="operator" onclick="performCalculation()">=</button>
     </div>
   </div>
 
 <script>
-  let expression = '0';
-  const currentEl = document.getElementById('current');
+  let displayValue = '0';
+  let firstOperand = null;
+  let operator = null;
+  let waitingForSecondOperand = false;
   const historyEl = document.getElementById('history');
+  const displayEl = document.getElementById('current');
 
-  function updateDisplays() {
-    currentEl.textContent = expression || '0';
+  function updateDisplay() {
+    displayEl.textContent = displayValue;
   }
 
-  function appendValue(val) {
-    if (expression === '0' && val !== '.') expression = '';
-    expression += val;
-    updateDisplays();
-  }
-
-  function setOperator(op) {
-    if (/[+−×÷]$/.test(expression)) {
-      expression = expression.slice(0, -1) + op;
+  function inputDigit(digit) {
+    if (waitingForSecondOperand) {
+      displayValue = digit;
+      waitingForSecondOperand = false;
     } else {
-      expression += op;
+      displayValue = displayValue === '0' ? digit : displayValue + digit;
     }
-    updateDisplays();
+    updateDisplay();
   }
 
-  function applyPercent() {
-    const match = expression.match(/(\d*\.?\d+)$);
-    if (!match) return;
-    const number = parseFloat(match[1]);
-    const percent = number / 100;
-    expression = expression.slice(0, -match[1].length) + percent;
-    updateDisplays();
-  }
-
-  function toggleSign() {
-    const match = expression.match(/(\d*\.?\d+)$);
-    if (!match) return;
-    const number = parseFloat(match[1]) * -1;
-    expression = expression.slice(0, -match[1].length) + number;
-    updateDisplays();
+  function inputDecimal() {
+    if (waitingForSecondOperand) {
+      displayValue = '0.';
+      waitingForSecondOperand = false;
+      updateDisplay();
+      return;
+    }
+    if (!displayValue.includes('.')) {
+      displayValue += '.';
+      updateDisplay();
+    }
   }
 
   function clearAll() {
-    expression = '0';
+    displayValue = '0';
+    firstOperand = null;
+    operator = null;
+    waitingForSecondOperand = false;
     historyEl.textContent = '';
-    updateDisplays();
+    updateDisplay();
   }
 
-  function calculate() {
-    try {
-      const sanitized = sanitize(expression);
-      const result = evalExpression(sanitized);
-      historyEl.textContent = expression;
-      expression = String(result);
-      updateDisplays();
-    } catch (e) {
-      showError();
+  function toggleSign() {
+    displayValue = String(parseFloat(displayValue) * -1 || 0);
+    updateDisplay();
+  }
+
+  function applyPercent() {
+    displayValue = String(parseFloat(displayValue) / 100 || 0);
+    updateDisplay();
+  }
+
+  function handleOperator(nextOperator) {
+    const inputValue = parseFloat(displayValue);
+    if (operator && waitingForSecondOperand) {
+      operator = nextOperator;
+      historyEl.textContent = `${firstOperand} ${operator}`;
+      return;
+    }
+    if (firstOperand === null && !isNaN(inputValue)) {
+      firstOperand = inputValue;
+    } else if (operator) {
+      const result = performOperation(firstOperand, inputValue, operator);
+      displayValue = String(result);
+      firstOperand = result;
+    }
+    waitingForSecondOperand = true;
+    operator = nextOperator;
+    historyEl.textContent = `${firstOperand} ${operator}`;
+    updateDisplay();
+  }
+
+  function performOperation(first, second, op) {
+    switch (op) {
+      case '+': return first + second;
+      case '−': return first - second;
+      case '×': return first * second;
+      case '÷': return second === 0 ? 'Error' : first / second;
+      default: return second;
     }
   }
 
-  function sanitize(exp) {
-    if (!/^[0-9.+−×÷\s]+$/.test(exp)) throw new Error('Invalid characters');
-    return exp.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+  function performCalculation() {
+    if (operator === null || waitingForSecondOperand) return;
+    const secondOperand = parseFloat(displayValue);
+    const result = performOperation(firstOperand, secondOperand, operator);
+    historyEl.textContent = `${firstOperand} ${operator} ${secondOperand} =`;
+    displayValue = String(result);
+    firstOperand = result === 'Error' ? null : result;
+    operator = null;
+    waitingForSecondOperand = false;
+    updateDisplay();
   }
 
-  function evalExpression(exp) {
-    const fn = new Function(`return (${exp})`);
-    const result = fn();
-    if (!isFinite(result)) throw new Error('Invalid math');
-    return result;
-  }
-
-  function showError() {
-    historyEl.textContent = 'Error';
-    expression = '0';
-    updateDisplays();
-  }
+  updateDisplay();
 </script>
 </body>
 </html>
