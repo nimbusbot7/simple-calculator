@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Simple Calculator</title>
-<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;display:flex;height:100vh;align-items:center;justify-content:center;background:#f6f8fa}#app{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.08);width:320px}input{width:100%;padding:10px;font-size:18px;margin-bottom:10px;border:1px solid #ddd;border-radius:6px}button{padding:10px 12px;margin:4px;font-size:18px;border-radius:6px;border:1px solid #ccc;background:#f0f3f5;cursor:pointer}#result{margin-top:12px;font-weight:600;font-size:18px}</style>
+<title>Enhanced Calculator</title>
+<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:#e9ecef;display:flex;height:100vh;align-items:center;justify-content:center}#app{background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);width:350px;text-align:center}input{width:100%;padding:12px;font-size:20px;border-radius:8px;border:1px solid #ced4da;box-shadow:0 1px 2px rgba(0,0,0,.2);margin-bottom:15px}button{padding:12px 15px;margin:5px;font-size:20px;border-radius:8px;border:none;background:#007bff;color:white;cursor:pointer;transition:background-color 0.3s}button:hover{background:#0056b3}#result{margin-top:15px;font-weight:bold;font-size:20px;color:#28a745}</style>
 </head>
 <body>
 <div id="app">
@@ -32,7 +32,7 @@
     <button onclick="clr()">C</button>
     <button onclick="append('+')">+</button>
   </div>
-  <div style="text-align:right;margin-top:8px">
+  <div style="text-align:right;margin-top:20px">
     <button onclick="calc()">Calculate</button>
   </div>
   <div id="result"></div>
