@@ -33,7 +33,6 @@
     <button class="operation" onclick="append('+')">+</button>
   </div>
   <div>
-    <button onclick="append('/')">÷</button>
     <button onclick="append('0')">0</button>
     <button onclick="append('.')">.</button>
   </div>
@@ -44,7 +43,7 @@ if(input.value === '0') input.value = ''; // Reset on 0
 input.value += s}
 function clr(){document.getElementById('expr').value='0';document.getElementById('result').innerText=''}
 function calc(){try{const e=document.getElementById('expr').value; if(e===''){return} // safe eval using Function
-const f=new Function('return ('+e.replace(/×/g,'*').replace(/÷/g,'/)')+')'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
+const f=new Function('return eval("'+e.replace(/×/g,'*').replace(/÷/g,'/')+'")'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
 </script>
 </body>
 </html>
