@@ -2,46 +2,47 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Enhanced Calculator</title>
-<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:#e9ecef;display:flex;height:100vh;align-items:center;justify-content:center}#app{background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);width:350px;text-align:center}input{width:100%;padding:12px;font-size:20px;border-radius:8px;border:1px solid #ced4da;box-shadow:0 1px 2px rgba(0,0,0,.2);margin-bottom:15px}button{padding:12px 15px;margin:5px;font-size:20px;border-radius:8px;border:none;background:#007bff;color:white;cursor:pointer;transition:background-color 0.3s}button:hover{background:#0056b3}#result{margin-top:15px;font-weight:bold;font-size:20px;color:#28a745}</style>
+<title>Modern Calculator</title>
+<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:#000;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center}#app{background:#121212;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);width:350px;text-align:center}input{width:100%;padding:12px;font-size:36px;border-radius:10px;border:none;background:#222;color:white;text-align:right}button{padding:12px 15px;margin:5px;font-size:20px;border-radius:50%;border:none;background:#333;color:white;cursor:pointer;transition:background-color 0.3s}button:hover{background:#555}button.operation{background:#ff7f50}#result{margin-top:20px;font-weight:bold;font-size:36px;color:#ff7f50}</style>
 </head>
 <body>
 <div id="app">
-  <input id="expr" placeholder="Enter expression, e.g. 12/4 + 3*2" />
+  <input type="text" id="expr" placeholder="0" disabled />
+  <div>
+    <button class="operation" onclick="clr()">AC</button>
+    <button class="operation" onclick="calc()">=</button>
+    <button class="operation" onclick="append('%')">%</button>
+    <button class="operation" onclick="append('/')">÷</button>
+  </div>
   <div>
     <button onclick="append('7')">7</button>
     <button onclick="append('8')">8</button>
     <button onclick="append('9')">9</button>
-    <button onclick="append('/')">/</button>
+    <button class="operation" onclick="append('*')">×</button>
   </div>
   <div>
     <button onclick="append('4')">4</button>
     <button onclick="append('5')">5</button>
     <button onclick="append('6')">6</button>
-    <button onclick="append('*')">*</button>
+    <button class="operation" onclick="append('-')">−</button>
   </div>
   <div>
     <button onclick="append('1')">1</button>
     <button onclick="append('2')">2</button>
     <button onclick="append('3')">3</button>
-    <button onclick="append('-')">-</button>
+    <button class="operation" onclick="append('+')">+</button>
   </div>
   <div>
+    <button class="operation" onclick="append('/')">÷</button>
     <button onclick="append('0')">0</button>
     <button onclick="append('.')">.</button>
-    <button onclick="clr()">C</button>
-    <button onclick="append('+')">+</button>
   </div>
-  <div style="text-align:right;margin-top:20px">
-    <button onclick="calc()">Calculate</button>
-  </div>
-  <div id="result"></div>
 </div>
 <script>
-function append(s){document.getElementById('expr').value += s}
-function clr(){document.getElementById('expr').value='';document.getElementById('result').innerText=''}
-function calc(){try{const e=document.getElementById('expr').value; if(!e.trim()){document.getElementById('result').innerText='';return} // safe eval using Function
-const f=new Function('return ('+e+')'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
+function append(s){var input=document.getElementById('expr');input.value=(input.value==='0'?'':input.value)+s}
+function clr(){document.getElementById('expr').value='0';document.getElementById('result').innerText=''}
+function calc(){try{const e=document.getElementById('expr').value; if(e===''){return} // safe eval using Function
+const f=new Function('return ('+e.replace(/×/*/g,'*').replace(/÷/g,'/')+')'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
 </script>
 </body>
 </html>
