@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="app">
-  <input type="text" id="expr" placeholder="0" disabled />
+  <input type="text" id="expr" value="0" placeholder="0" />
   <div>
     <button class="operation" onclick="clr()">AC</button>
     <button class="operation" onclick="calc()">=</button>
@@ -39,10 +39,12 @@
   </div>
 </div>
 <script>
-function append(s){var input=document.getElementById('expr');input.value=(input.value==='0'?'':input.value)+s}
+function append(s){var input=document.getElementById('expr');
+if(input.value === '0') input.value = ''; // Reset on 0
+input.value += s}
 function clr(){document.getElementById('expr').value='0';document.getElementById('result').innerText=''}
 function calc(){try{const e=document.getElementById('expr').value; if(e===''){return} // safe eval using Function
-const f=new Function('return ('+e.replace(/×/*/g,'*').replace(/÷/g,'/')+')'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
+const f=new Function('return ('+e.replace(/×/g,'*').replace(/÷/g,'/')+')'); const res=f(); document.getElementById('result').innerText=String(res);}catch(err){document.getElementById('result').innerText='Error'}}
 </script>
 </body>
 </html>
